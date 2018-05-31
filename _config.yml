@@ -6,38 +6,24 @@
 name:               "Kiko Plus"
 
 author:
-  facebook:         your-id
-  youtubeUser:      your-id
-  youtubeChannel:   your-id
-  twitter:          your-id
-  github:           your-id
-  stackoverflow:    your-id
-  quora:            your-id
-  linkedin:         your-id
-  pinterest:        your-id
-  googlePlus:       your-id
-  instagram:        your-id
-  reddit:           your-id
-  medium:           your-id
-  tumblr:           your-id
-  email:            your-id@your-email.com
+  email:            dnsldprp@gmail.com
 
 copyright:
-  year:             2017
-  name:             Kiko
+  year:             2018
+  name:             myungho lee
 
 # Google-analytics
 google-analytics:
-  id:               ""
+  id:               "dnsldprp@gmail.com"
 
 # Disqus
 disqus:
-  id:               "kiko-plus"
+  id:               "dnsldprp@gmail.com"
 
 # URL
-url:                "https://AWEEKJ.github.io" # the base hostname & protocol for your site
+url:                "https://dnsldprp.github.io" # the base hostname & protocol for your site
 # url:                "http://localhost:4000" # use this url when you develop
-baseurl:            "/Kiko-plus" # the subpath of your site, e.g. /blog
+#baseurl:            "/Kiko-plus" # the subpath of your site, e.g. /blog
 
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
@@ -61,8 +47,6 @@ nav:
     url:            "/archive"
   - name:           "Tags"
     url:            "/tags"
-  - name:           "Github"
-    url:            "https://github.com/AWEEKJ/Kiko-plus"
 
 # Sass
 sass:
