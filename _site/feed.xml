@@ -24,8 +24,9 @@
 &lt;hr /&gt;
 
 &lt;h2 id=&quot;bold&quot;&gt;bold&lt;/h2&gt;
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;**&lt;/code&gt;로 텍스트를 감싸면 된다.
-&lt;strong&gt;굵게&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;**&lt;/code&gt;로 텍스트를 감싸면 된다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;굵게&lt;/strong&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 
