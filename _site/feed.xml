@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>dnsldprp</title>
+    <link>http://localhost:4000</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>블로그 작성 방법</title>
+        <description>&lt;h2 id=&quot;title&quot;&gt;Title&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt;으로 시작, &lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt;은 1개 ~ 6개까지 쓸 수 있고 &lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt;의 갯수에 따라 글씨크기가 작아진다.&lt;/p&gt;
+
+&lt;p&gt;(`로 텍스트를 감싸면 &lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt;처럼 인라인 코드블럭이 된다.)&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;code-block&quot;&gt;Code block&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;~~~&lt;/code&gt;로 블럭을 감싸면 된다.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function execute(){
+    print(&quot;function&quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;bold&quot;&gt;bold&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;**&lt;/code&gt;로 텍스트를 감싸면 된다.
+&lt;strong&gt;굵게&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;hr&quot;&gt;hr&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;***&lt;/code&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;blockquote&quot;&gt;BlockQuote&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt;를 문장 앞에 쓰면 된다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;HAPPY!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;link&quot;&gt;Link&lt;/h1&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;[링크](https://dnsldprp.github.io) &quot;링크 제목&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://youtube.com&quot;&gt;Youtube&lt;/a&gt; “유튜브”&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;list&quot;&gt;List&lt;/h1&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;No.&lt;/code&gt;  숫자다음 . 찍으면 된다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;-&lt;/code&gt; 순서 없는 리스트&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;A&lt;/li&gt;
+  &lt;li&gt;B&lt;/li&gt;
+  &lt;li&gt;C&lt;/li&gt;
+  &lt;li&gt;D&lt;/li&gt;
+  &lt;li&gt;E&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A&lt;/li&gt;
+  &lt;li&gt;B&lt;/li&gt;
+  &lt;li&gt;C&lt;/li&gt;
+  &lt;li&gt;D&lt;/li&gt;
+  &lt;li&gt;E&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;table&quot;&gt;Table&lt;/h2&gt;
+&lt;p&gt;No | Name&lt;/p&gt;
+
+&lt;p&gt;——–|——–&lt;/p&gt;
+
+&lt;p&gt;1 | LEE&lt;/p&gt;
+
+&lt;p&gt;2 | MYUNG&lt;/p&gt;
+
+&lt;p&gt;3 | Ho&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;No&lt;/th&gt;
+      &lt;th&gt;Name&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;LEE&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;MYUNG&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;HO&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+</description>
+        <pubDate>Thu, 31 May 2018 00:00:00 +0900</pubDate>
+        <link>http://localhost:4000/2018-05-31/how-to-use/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018-05-31/how-to-use/</guid>
+      </item>
+    
+  </channel>
+</rss>
