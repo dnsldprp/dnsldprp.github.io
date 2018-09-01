@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>pip 패키지 다운 받아서 설치하는법</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css" type="text/css">
+
+  <!-- Font -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
+
+  <link rel="alternate" type="application/rss+xml" title="RSS Feed for dnsldprp" href="/feed.xml" />
+  <!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>pip 패키지 다운 받아서 설치하는법 | dnsldprp</title>
+<meta name="generator" content="Jekyll v3.8.2" />
+<meta property="og:title" content="pip 패키지 다운 받아서 설치하는법" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="인터넷이 안되는 환경에서 pip 패키지설치" />
+<meta property="og:description" content="인터넷이 안되는 환경에서 pip 패키지설치" />
+<link rel="canonical" href="http://localhost:4000/2018-08-08/pip-offline-install/" />
+<meta property="og:url" content="http://localhost:4000/2018-08-08/pip-offline-install/" />
+<meta property="og:site_name" content="dnsldprp" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-08-08T00:00:00+09:00" />
+<script type="application/ld+json">
+{"description":"인터넷이 안되는 환경에서 pip 패키지설치","@type":"BlogPosting","url":"http://localhost:4000/2018-08-08/pip-offline-install/","headline":"pip 패키지 다운 받아서 설치하는법","dateModified":"2018-08-08T00:00:00+09:00","datePublished":"2018-08-08T00:00:00+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018-08-08/pip-offline-install/"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+
+  <!-- Google Analytics -->
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'dnsldprp@gmail.com', 'auto');
+ga('send', 'pageview');
+
+</script>
+
+
+
+</head>
+
+<body>
+  <div class="content-container">
+    <header>
+  <div class="header-small">
+    <a href="http://localhost:4000">dnsldprp</a>
+  </div>
+</header>
+<div class="post">
+  <div class="post-title">pip 패키지 다운 받아서 설치하는법</div>
+  <span class="post-date">
+    <time>08 Aug 2018</time>
+  </span>
+  <div class="post-tag">
+    <ul>
+      
+      <li>
+        <a href="http://localhost:4000/tags#pip">
+          <span>pip</span>
+        </a>
+      </li>
+      
+      
+      <li>
+        <a href="http://localhost:4000/tags#python">
+          <span>python</span>
+        </a>
+      </li>
+      
+      
+    </ul>
+  </div>
+
+  <h2 id="pip-패키지-오프라인으로-인스톨-하는법">pip 패키지 오프라인으로 인스톨 하는법</h2>
+
+<p><strong>인터넷이 안되는 환경에서 파이썬 패키지를 활용해야 할때</strong></p>
+
+<hr />
+
+<h2 id="순서">순서</h2>
+<ul>
+  <li>온라인 환경에서 OS 버전, 파이썬 버전 고려해서 패키지 다운로드
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install some-packages 
+</code></pre></div>    </div>
+  </li>
+  <li>설치된 패키지 목록 저장
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip freeze &gt; packages.txt
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<blockquote>
+  <p>필요없는 패키지들은 삭제 하면 됨</p>
+</blockquote>
+
+<ul>
+  <li>패키지 파일 다운로드
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip download -r ./packages.txt
+</code></pre></div>    </div>
+  </li>
+  <li>파일 압축
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tar -zcvf packages.tar.gz ./*
+</code></pre></div>    </div>
+  </li>
+  <li>설치할 곳으로 압축파일 옮긴 후 압축 풀기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tar -zxvf package.tar.gz
+</code></pre></div>    </div>
+  </li>
+  <li>설치
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install --no-index --find-links="./" -r ./packages.txt
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<blockquote>
+  <p>패키지들 설치하는 과정에서 알 수 없는 에러 발생하면 에러 패키지를 제외하고 하나씩 설치</p>
+  <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install --no-index --find-links="./" --no-dependencies requests-2.19.1-py2.py3-none-any.whl
+</code></pre></div>  </div>
+</blockquote>
+
+
+
+  <!-- Disqus -->
+  
+  <div class="post-disqus">
+      <section id="disqus_thread"></section>
+      <script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables */
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = '//dnsldprp@gmail.com.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  </div>
+  
+
+</div>
+
+
+    <!-- Documents about icons are here: http://fontawesome.io/icons/ -->
+<div class="footer">
+  <hr />
+  <div class="footer-link">
+    
+	
+	
+	
+	
+
+    
+
+    
+	
+	
+	
+	
+
+    
+	
+	
+	
+	
+	
+	
+	
+	
+
+    
+
+    
+
+    
+    <a href="mailto:dnsldprp@gmail.com"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+    
+
+  </div>
+  © 2018 myungho lee. All rights reserved.
+</div>
+
+  </div>
+</body>
+</html>

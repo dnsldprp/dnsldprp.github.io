@@ -3,6 +3,6 @@ title: About
 permalink: /about/
 ---
 
-##### Linux, Oracle, Cloud, Python..
+##### 아무거나
 
 
