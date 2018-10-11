@@ -6,6 +6,30 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Oracle 11g RAC 구성 및 Interconnect switch 설정</title>
+        <description>&lt;h3 id=&quot;oracle-11g-rac-구성&quot;&gt;ORACLE 11g RAC 구성&lt;/h3&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;&lt;img src=&quot;/images/OracleRAC.png&quot; alt=&quot;topology&quot; /&gt;&lt;/p&gt;
+&lt;h6 id=&quot;백업-dr-ipmi-스위치는-제외&quot;&gt;백업, DR, IPMI 스위치는 제외&lt;/h6&gt;
+
+&lt;hr /&gt;
+
+&lt;h6 id=&quot;interconnect-스위치-설정&quot;&gt;Interconnect 스위치 설정&lt;/h6&gt;
+&lt;ul&gt;
+  &lt;li&gt;두 스위치간 포트채널 구성 후 동일 VLAN으로 설정&lt;/li&gt;
+  &lt;li&gt;서버 연결 포트에 portfast 설정 (설정하지 않으면 failover에 30초정도 딜레이 생길수있다)&lt;/li&gt;
+  &lt;li&gt;스위치 로그 관리를 위해 syslog forwarding&lt;/li&gt;
+  &lt;li&gt;서버 연결 포트에 점보프레임 설정 (MTU 9000)&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Thu, 11 Oct 2018 00:00:00 +0900</pubDate>
+        <link>http://localhost:4000/2018-10-11/rac-interconnect/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018-10-11/rac-interconnect/</guid>
+      </item>
+    
+      <item>
         <title>Ansible AWX에서 third-party credential storage 사용하는법</title>
         <description>&lt;h3 id=&quot;ansible-lookup-plugin-활용해-동시에-여러-서버의-암호-가져와-실행시킬-수-있다&quot;&gt;ansible lookup plugin 활용해 동시에 여러 서버의 암호 가져와 실행시킬 수 있다&lt;/h3&gt;
 
