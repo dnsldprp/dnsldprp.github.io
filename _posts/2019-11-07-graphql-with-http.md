@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "graphql over http 기본 "
-description: "http로 graphql request 하는 방법 (기본)"
+title: "GraphQL http request 기본 "
+description: "http로 graphql request 하는 방법"
 date: 2019-11-07
 tags: [graphql]
 comments: true
@@ -38,12 +38,13 @@ input CreateUserInput {
 ***
 
 #### GET - ID를 이용한 유저 조회
-
+~~~
 endpoint : https://my-url/graphql
 param
   query : {getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6"){name}}
-  
+
 url : https://my-url/graphql?query={getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6"){name}}
+~~~
 
 ###### graphql query
 ~~~
@@ -53,11 +54,6 @@ url : https://my-url/graphql?query={getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff
     name
   }
 }
-~~~
-
-###### request
-~~~
-https://my-url/graphql?query={getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6"){name}}
 ~~~
 
 ###### response
@@ -71,7 +67,10 @@ https://my-url/graphql?query={getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6")
 }
 ~~~
 
+*** 
+
 #### POST - 유저 생성
+~~~
 endpoint : https://my-url/graphql
 header : {Content-Type:application/json}
 body : 
@@ -83,6 +82,7 @@ body :
 		}
 	}
 }
+~~~
 
 - body 에 query에는 graphql query string을, variables에는 query variables 입력
 
