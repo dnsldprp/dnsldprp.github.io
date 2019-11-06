@@ -3,6 +3,6 @@ title: About
 permalink: /about/
 ---
 
-##### 아무거나
+##### 잡다한 기록용도
 
 
