@@ -1,0 +1,48 @@
+I"�<h2 id="pip-패키지-오프라인으로-인스톨-하는법">pip 패키지 오프라인으로 인스톨 하는법</h2>
+
+<p><strong>인터넷이 안되는 환경에서 파이썬 패키지를 활용해야 할때</strong></p>
+
+<hr />
+
+<h2 id="순서">순서</h2>
+<ul>
+  <li>온라인 환경에서 OS 버전, 파이썬 버전 고려해서 패키지 다운로드
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install some-packages 
+</code></pre></div>    </div>
+  </li>
+  <li>설치된 패키지 목록 저장
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip freeze &gt; packages.txt
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<blockquote>
+  <p>필요없는 패키지들은 삭제 하면 됨</p>
+</blockquote>
+
+<ul>
+  <li>패키지 파일 다운로드
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip download -r ./packages.txt
+</code></pre></div>    </div>
+  </li>
+  <li>파일 압축
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tar -zcvf packages.tar.gz ./*
+</code></pre></div>    </div>
+  </li>
+  <li>설치할 곳으로 압축파일 옮긴 후 압축 풀기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tar -zxvf package.tar.gz
+</code></pre></div>    </div>
+  </li>
+  <li>설치
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install --no-index --find-links="./" -r ./packages.txt
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<blockquote>
+  <p>패키지들 설치하는 과정에서 알 수 없는 에러 발생하면 에러 패키지를 제외하고 하나씩 설치</p>
+  <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install --no-index --find-links="./" --no-dependencies requests-2.19.1-py2.py3-none-any.whl
+</code></pre></div>  </div>
+</blockquote>
+
+:ET

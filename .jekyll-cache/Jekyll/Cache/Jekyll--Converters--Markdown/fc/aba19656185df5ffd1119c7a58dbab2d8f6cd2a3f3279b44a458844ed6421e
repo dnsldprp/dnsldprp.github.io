@@ -1,0 +1,105 @@
+I"�<h2 id="title">Title</h2>
+<p><code class="highlighter-rouge">#</code>으로 시작, <code class="highlighter-rouge">#</code>은 1개 ~ 6개까지 쓸 수 있고 <code class="highlighter-rouge">#</code>의 갯수에 따라 글씨크기가 작아진다.</p>
+
+<p>(`로 텍스트를 감싸면 <code class="highlighter-rouge">#</code>처럼 인라인 코드블럭이 된다.)</p>
+
+<hr />
+
+<h2 id="code-block">Code block</h2>
+<p><code class="highlighter-rouge">~~~</code>로 블럭을 감싸면 된다.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function execute(){
+    print("function")
+}
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="bold">bold</h2>
+<p><code class="highlighter-rouge">**</code>로 텍스트를 감싸면 된다.</p>
+
+<p><strong>굵게</strong></p>
+
+<hr />
+
+<h2 id="hr">hr</h2>
+<p><code class="highlighter-rouge">***</code></p>
+
+<hr />
+
+<h2 id="blockquote">BlockQuote</h2>
+<p><code class="highlighter-rouge">&gt;</code>를 문장 앞에 쓰면 된다.</p>
+
+<blockquote>
+  <p>HAPPY!</p>
+</blockquote>
+
+<hr />
+
+<h1 id="link">Link</h1>
+<p><code class="highlighter-rouge">[링크](https://dnsldprp.github.io) "링크 제목"</code></p>
+
+<p><a href="https://youtube.com">Youtube</a> “유튜브”</p>
+
+<hr />
+
+<h1 id="list">List</h1>
+<p><code class="highlighter-rouge">No.</code>  숫자다음 . 찍으면 된다.</p>
+
+<p><code class="highlighter-rouge">-</code> 순서 없는 리스트</p>
+
+<ol>
+  <li>A</li>
+  <li>B</li>
+  <li>C</li>
+  <li>D</li>
+  <li>E</li>
+</ol>
+
+<hr />
+
+<ul>
+  <li>A</li>
+  <li>B</li>
+  <li>C</li>
+  <li>D</li>
+  <li>E</li>
+</ul>
+
+<hr />
+
+<h2 id="table">Table</h2>
+<p>No | Name</p>
+
+<p>——–|——–</p>
+
+<p>1 | LEE</p>
+
+<p>2 | MYUNG</p>
+
+<p>3 | Ho</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>LEE</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>MYUNG</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>HO</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+:ET

@@ -6,27 +6,307 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
-        <title>Oracle 11g RAC 구성 및 Interconnect switch 설정</title>
-        <description>&lt;h3 id=&quot;oracle-11g-rac-구성&quot;&gt;ORACLE 11g RAC 구성&lt;/h3&gt;
+        <title>AWS Lambda - S3 PreSignedURL 사용해서 파일 업로드</title>
+        <description>&lt;hr /&gt;
+&lt;h4 id=&quot;presignedurl-&quot;&gt;PreSignedURL ??&lt;/h4&gt;
+&lt;ol&gt;
+  &lt;li&gt;클라이언트 -&amp;gt; 서버로 이미지를 업로드할 수 있는 URL을 요청&lt;/li&gt;
+  &lt;li&gt;서버는 URL 생성 후 클라이언트에 전달&lt;/li&gt;
+  &lt;li&gt;클라이언트에서 이미지 저장소로 바로 업로드&lt;/li&gt;
+  &lt;li&gt;서버쪽에 이미지 왔다갔다하는 부하를 줄일 수 있다.&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;hr /&gt;
-&lt;p&gt;&lt;img src=&quot;/images/OracleRAC.png&quot; alt=&quot;topology&quot; /&gt;&lt;/p&gt;
-&lt;h6 id=&quot;백업-dr-ipmi-스위치는-제외&quot;&gt;백업, DR, IPMI 스위치는 제외&lt;/h6&gt;
+&lt;h4 id=&quot;로컬에서-테스트&quot;&gt;로컬에서 테스트&lt;/h4&gt;
 
-&lt;hr /&gt;
-
-&lt;h6 id=&quot;interconnect-스위치-설정&quot;&gt;Interconnect 스위치 설정&lt;/h6&gt;
 &lt;ul&gt;
-  &lt;li&gt;두 스위치간 포트채널 구성 후 동일 VLAN으로 설정&lt;/li&gt;
-  &lt;li&gt;서버 연결 포트에 portfast 설정 (설정하지 않으면 failover에 30초정도 딜레이 생길수있다)&lt;/li&gt;
-  &lt;li&gt;스위치 로그 관리를 위해 syslog forwarding&lt;/li&gt;
-  &lt;li&gt;서버 연결 포트에 점보프레임 설정 (MTU 9000)&lt;/li&gt;
+  &lt;li&gt;aws cli configure&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# pip install boto3
+# pip install awscli
+# aws configure
+AWS Access Key ID [None]:
+AWS Secret Access Key [None]:
+Default region name [None]:
+Default output format [None]:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;aws IAM console 접속 -&amp;gt; 사용자 생성 -&amp;gt; 권한에 AmazonS3FullAccess 추가후 키 확인해서 넣어주면 됨
+Default region은 한국 리전일 경우 ap-northeast-2&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;s3 버킷 조회&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import boto3
+from botocore.exceptions import ClientError
+
+def getBuckets():
+    s3 = boto3.client('s3')
+    response = s3.list_buckets()
+
+    print('Existing buckets:')
+    for bucket in response['Buckets']:
+        print(f'  {bucket[&quot;Name&quot;]}')
+
+if __name__ == '__main__':
+    getBuckets()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;upload 용 PreSignedURL 생성&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def create_presigned_post():
+    
+    bucket_name='yourbuckname'
+    object_name='overlay.png' # 생성될 object name
+    fileds={&quot;acl&quot;: &quot;public-read&quot;, &quot;Content-Type&quot;: 'png'}
+    conditions=[
+        {&quot;acl&quot;:&quot;public-read&quot;},
+        {&quot;Content-Type&quot;:&quot;png&quot;}
+    ]
+    expiration=3600
+   
+    # Generate a presigned S3 POST URL
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.generate_presigned_post(bucket_name,
+                                                     object_name,
+                                                     fileds,
+                                                     conditions,
+                                                     expiration)
+    except ClientError as e:
+        logging.error(e)
+        return None
+
+    # The response contains the presigned URL and required fields
+    print(response)
+    return response
+
+if __name__ == '__main__':
+    create_presigned_post()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;response 확인&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+'url': 'https://yourbucket.s3.amazonaws.com/', 
+'fields': 
+{'key': 'object_name', 
+'x-amz-algorithm': 'AWS4-HMAC-SHA256', 
+'x-amz-credential': '', 
+'x-amz-date': '', 
+'policy': '', 
+'x-amz-signature': ''
+}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;url에 아래 field들을 body로 multipart 요청 보내면 된다&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;postman 예시&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/postman_local.JPG&quot; alt=&quot;screenshot&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;aws-lambda-python36-에서-사용&quot;&gt;AWS Lambda (Python3.6) 에서 사용&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Lambda의 IAM 역할에 AmazonS3FullAccess 추가&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Lambda 함수 작성&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import json
+import boto3
+
+def lambda_handler(event, context):
+    
+    bucket_name='yourbuckname'
+    object_name=event['object_name'] # parameter
+    fileds={&quot;acl&quot;: &quot;public-read&quot;, &quot;Content-Type&quot;: 'png'}
+    conditions=[
+        {&quot;acl&quot;:&quot;public-read&quot;},
+        {&quot;Content-Type&quot;:&quot;png&quot;}
+    ]
+    expiration=3600
+   
+    # Generate a presigned S3 POST URL
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.generate_presigned_post(bucket_name,
+                                                     object_name,
+                                                     fileds,
+                                                     conditions,
+                                                     expiration)
+    except ClientError as e:
+        logging.error(e)
+        return None
+
+    # The response contains the presigned URL and required fields
+    #print(response)
+    return response
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;테스트 이벤트 구성 후 테스트했을 때 response&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+  &quot;url&quot;: &quot;https://yourbucket.s3.amazonaws.com/&quot;,
+  &quot;fields&quot;: {
+    &quot;acl&quot;: &quot;public-read&quot;,
+    &quot;Content-Type&quot;: &quot;png&quot;,
+    &quot;key&quot;: &quot;object_name&quot;,
+    &quot;x-amz-algorithm&quot;: &quot;AWS4-HMAC-SHA256&quot;,
+    &quot;x-amz-credential&quot;: &quot;&quot;,
+    &quot;x-amz-date&quot;: &quot;&quot;,
+    &quot;x-amz-security-token&quot;: &quot;&quot;,
+    &quot;policy&quot;: &quot;&quot;,
+    &quot;x-amz-signature&quot;: &quot;&quot;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;로컬에서 했을때와 파라미터는 다르지만 똑같이 field를 body로 mulitpart 전송하면됨&lt;/p&gt;
+
+&lt;p&gt;외부에서 접속가능한 URL은 https://yourbucket.s3.amazonaws.com/object_name&lt;/p&gt;
 </description>
-        <pubDate>Thu, 11 Oct 2018 00:00:00 +0900</pubDate>
-        <link>http://localhost:4000/2018-10-11/rac-interconnect/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018-10-11/rac-interconnect/</guid>
+        <pubDate>Sat, 09 Nov 2019 00:00:00 +0000</pubDate>
+        <link>http://localhost:4000/2019-11-09/aws-s3-use-presignedurl/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019-11-09/aws-s3-use-presignedurl/</guid>
+      </item>
+    
+      <item>
+        <title>GraphQL http request 기본 </title>
+        <description>&lt;h4 id=&quot;graphql-&quot;&gt;GraphQL ?&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;단일 엔드포인트로 백엔드 부담이 줄어듬, serverless와 잘 어울리는듯함&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://graphql-kr.github.io/learn/&quot;&gt;공식 가이드&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;schema&quot;&gt;Schema&lt;/h4&gt;
+&lt;hr /&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;type User {
+	id: ID!
+	name: String
+}
+
+type Query {
+	getUser(id: ID!): User
+}
+
+type Mutation {
+	createUser(input: CreateUserInput!): User
+}
+
+input CreateUserInput {
+	name: String
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;뮤테이션은 데이터 조작이 일어날 때 사용, resolver를 등록해서 원하는 행동을 할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;get---id를-이용한-유저-조회&quot;&gt;GET - ID를 이용한 유저 조회&lt;/h4&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;endpoint : https://my-url/graphql
+param
+  query : {getUser(id:&quot;ca02ab35-b8e6-438a-9d7f-456b12ff46d6&quot;){name}}
+
+url : https://my-url/graphql?query={getUser(id:&quot;ca02ab35-b8e6-438a-9d7f-456b12ff46d6&quot;){name}}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;graphql-query&quot;&gt;graphql query&lt;/h6&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+  getUser(id:&quot;ca02ab35-b8e6-438a-9d7f-456b12ff46d6&quot;)
+  {
+    name
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;response&quot;&gt;response&lt;/h6&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+    &quot;data&quot;: {
+        &quot;getMyModelType&quot;: {
+            &quot;name&quot;: &quot;Hello, world!&quot;
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;post---유저-생성&quot;&gt;POST - 유저 생성&lt;/h4&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;endpoint : https://my-url/graphql
+header : {Content-Type:application/json}
+body : 
+{
+	&quot;query&quot;:&quot;mutation myMutation ($user:CreateUserInput!) { createUser(input:$user) { id name }}&quot;,
+	&quot;variables&quot;:{
+		&quot;user&quot;:{
+			&quot;name&quot;:&quot;dnsldprp&quot;
+		}
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;body 에 query에는 graphql query string을, variables에는 query variables 입력&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h6 id=&quot;graphql-query-1&quot;&gt;graphql query&lt;/h6&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mutation myMutation($user:CreateUserInput!){
+  createUser(input:$user){
+    id
+    name
+  }
+}
+
+Query variables
+{
+  &quot;user&quot;: {
+    &quot;title&quot;: &quot;Hello, world!!!!&quot;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;response-1&quot;&gt;response&lt;/h6&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+    &quot;data&quot;: {
+        &quot;createUser&quot;: {
+            &quot;id&quot;: &quot;7ac55b71-2c17-4a6b-8c2f-18fd5a90e166&quot;,
+            &quot;title&quot;: &quot;Hello, world!!!!&quot;
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Thu, 07 Nov 2019 00:00:00 +0000</pubDate>
+        <link>http://localhost:4000/2019-11-07/graphql-with-http/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019-11-07/graphql-with-http/</guid>
       </item>
     
       <item>
@@ -85,7 +365,7 @@ env:
 &lt;h4 id=&quot;마지막으로-template-탭에서-inventory-credential-적용-후-스크립트-수행&quot;&gt;마지막으로, template 탭에서 inventory, credential 적용 후 스크립트 수행&lt;/h4&gt;
 
 </description>
-        <pubDate>Wed, 08 Aug 2018 00:00:00 +0900</pubDate>
+        <pubDate>Wed, 08 Aug 2018 00:00:00 +0000</pubDate>
         <link>http://localhost:4000/2018-08-08/awx-third-party/</link>
         <guid isPermaLink="true">http://localhost:4000/2018-08-08/awx-third-party/</guid>
       </item>
@@ -140,7 +420,7 @@ env:
 &lt;/blockquote&gt;
 
 </description>
-        <pubDate>Wed, 08 Aug 2018 00:00:00 +0900</pubDate>
+        <pubDate>Wed, 08 Aug 2018 00:00:00 +0000</pubDate>
         <link>http://localhost:4000/2018-08-08/pip-offline-install/</link>
         <guid isPermaLink="true">http://localhost:4000/2018-08-08/pip-offline-install/</guid>
       </item>
@@ -170,13 +450,13 @@ env:
 &lt;/ol&gt;
 
 </description>
-        <pubDate>Wed, 08 Aug 2018 00:00:00 +0900</pubDate>
+        <pubDate>Wed, 08 Aug 2018 00:00:00 +0000</pubDate>
         <link>http://localhost:4000/2018-08-08/dockerimage-offline-transfer/</link>
         <guid isPermaLink="true">http://localhost:4000/2018-08-08/dockerimage-offline-transfer/</guid>
       </item>
     
       <item>
-        <title>마크다운 사용 방법</title>
+        <title>github 마크다운 사용 방법</title>
         <description>&lt;h2 id=&quot;title&quot;&gt;Title&lt;/h2&gt;
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt;으로 시작, &lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt;은 1개 ~ 6개까지 쓸 수 있고 &lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt;의 갯수에 따라 글씨크기가 작아진다.&lt;/p&gt;
 
@@ -282,7 +562,7 @@ env:
 
 &lt;hr /&gt;
 </description>
-        <pubDate>Thu, 31 May 2018 00:00:00 +0900</pubDate>
+        <pubDate>Thu, 31 May 2018 00:00:00 +0000</pubDate>
         <link>http://localhost:4000/2018-05-31/how-to-use/</link>
         <guid isPermaLink="true">http://localhost:4000/2018-05-31/how-to-use/</guid>
       </item>

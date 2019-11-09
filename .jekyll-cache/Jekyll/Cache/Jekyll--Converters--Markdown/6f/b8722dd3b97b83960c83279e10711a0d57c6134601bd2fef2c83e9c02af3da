@@ -1,0 +1,170 @@
+I"!<hr />
+<h4 id="presignedurl-">PreSignedURL ??</h4>
+<ol>
+  <li>클라이언트 -&gt; 서버로 이미지를 업로드할 수 있는 URL을 요청</li>
+  <li>서버는 URL 생성 후 클라이언트에 전달</li>
+  <li>클라이언트에서 이미지 저장소로 바로 업로드</li>
+  <li>서버쪽에 이미지 왔다갔다하는 부하를 줄일 수 있다.</li>
+</ol>
+
+<h4 id="로컬에서-테스트">로컬에서 테스트</h4>
+
+<ul>
+  <li>aws cli configure</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># pip install boto3
+# pip install awscli
+# aws configure
+AWS Access Key ID [None]:
+AWS Secret Access Key [None]:
+Default region name [None]:
+Default output format [None]:
+</code></pre></div></div>
+<p>aws IAM console 접속 -&gt; 사용자 생성 -&gt; 권한에 AmazonS3FullAccess 추가후 키 확인해서 넣어주면 됨
+Default region은 한국 리전일 경우 ap-northeast-2</p>
+
+<hr />
+
+<ul>
+  <li>s3 버킷 조회</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import boto3
+from botocore.exceptions import ClientError
+
+
+def getBuckets():
+    s3 = boto3.client('s3')
+    response = s3.list_buckets()
+
+    print('Existing buckets:')
+    for bucket in response['Buckets']:
+        print(f'  {bucket["Name"]}')
+
+if __name__ == '__main__':
+    getBuckets()
+</code></pre></div></div>
+
+<hr />
+
+<ul>
+  <li>upload 용 PreSignedURL 생성</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def create_presigned_post():
+    
+    bucket_name='yourbuckname'
+    object_name='overlay.png' # 생성될 object name
+    fileds={"acl": "public-read", "Content-Type": 'png'}
+    conditions=[
+        {"acl":"public-read"},
+        {"Content-Type":"png"}
+    ]
+    expiration=3600
+   
+    # Generate a presigned S3 POST URL
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.generate_presigned_post(bucket_name,
+                                                     object_name,
+                                                     fileds,
+                                                     conditions,
+                                                     expiration)
+    except ClientError as e:
+        logging.error(e)
+        return None
+
+    # The response contains the presigned URL and required fields
+    print(response)
+    return response
+
+if __name__ == '__main__':
+    create_presigned_post()
+</code></pre></div></div>
+
+<ul>
+  <li>response 확인
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+'url': 'https://yourbucket.s3.amazonaws.com/', 
+'fields': 
+{'key': 'object_name', 
+'x-amz-algorithm': 'AWS4-HMAC-SHA256', 
+'x-amz-credential': '', 
+'x-amz-date': '', 
+'policy': '', 
+'x-amz-signature': ''
+}
+}
+</code></pre></div>    </div>
+    <p>url에 아래 field들을 body로 multipart 요청 보내면 된다</p>
+  </li>
+  <li>postman 예시
+<a href="/images/postman_local.JPG | absolute_url">screenshot</a></li>
+</ul>
+
+<h4 id="aws-lambda-python36-에서-사용">AWS Lambda (Python3.6) 에서 사용</h4>
+
+<ul>
+  <li>
+    <p>Lambda의 IAM 역할에 AmazonS3FullAccess 추가</p>
+  </li>
+  <li>
+    <p>Lambda 함수 작성
+~~~
+import json
+import boto3</p>
+  </li>
+</ul>
+
+<p>def lambda_handler(event, context):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bucket_name='yourbuckname'
+object_name=event['object_name'] # parameter
+fileds={"acl": "public-read", "Content-Type": 'png'}
+conditions=[
+    {"acl":"public-read"},
+    {"Content-Type":"png"}
+]
+expiration=3600
+   
+# Generate a presigned S3 POST URL
+s3_client = boto3.client('s3')
+try:
+    response = s3_client.generate_presigned_post(bucket_name,
+                                                 object_name,
+                                                 fileds,
+                                                 conditions,
+                                                 expiration)
+except ClientError as e:
+    logging.error(e)
+    return None
+
+# The response contains the presigned URL and required fields
+#print(response)
+return response ~~~
+</code></pre></div></div>
+
+<ul>
+  <li>테스트 이벤트 구성 후 테스트했을 때 response
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+"url": "https://yourbucket.s3.amazonaws.com/",
+"fields": {
+  "acl": "public-read",
+  "Content-Type": "png",
+  "key": "object_name",
+  "x-amz-algorithm": "AWS4-HMAC-SHA256",
+  "x-amz-credential": "",
+  "x-amz-date": "",
+  "x-amz-security-token": "",
+  "policy": "",
+  "x-amz-signature": ""
+}
+}
+</code></pre></div>    </div>
+    <p>로컬에서 했을때와 파라미터는 다르지만 똑같이 field를 body로 mulitpart 전송하면됨</p>
+  </li>
+</ul>
+
+<p>외부에서 접속가능한 URL은 https://yourbucket.s3.amazonaws.com/object_name</p>
+:ET

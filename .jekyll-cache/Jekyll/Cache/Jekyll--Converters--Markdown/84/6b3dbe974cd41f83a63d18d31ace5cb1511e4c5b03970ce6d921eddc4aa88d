@@ -1,34 +1,37 @@
----
-layout: post
-title: "AWS Lambda - S3 PreSignedURL 사용해서 파일 업로드"
-description: "S3 PreSignedURL with upload file"
-date: 2019-11-09
-tags: [aws lambda, aws s3, python]
-comments: true
-share: true
----
+I"�<hr />
+<h4 id="presignedurl-">PreSignedURL ??</h4>
+<ol>
+  <li>클라이언트 -&gt; 서버로 이미지를 업로드할 수 있는 URL을 요청</li>
+  <li>서버는 URL 생성 후 클라이언트에 전달</li>
+  <li>클라이언트에서 이미지 저장소로 바로 업로드</li>
+  <li>서버쪽에 이미지 왔다갔다하는 부하를 줄일 수 있다.</li>
+</ol>
 
-***
-#### 로컬에서 테스트
+<h4 id="로컬에서-테스트">로컬에서 테스트</h4>
 
-- aws cli configure
-~~~
-# pip install boto3
+<ul>
+  <li>aws cli configure</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># pip install boto3
 # pip install awscli
 # aws configure
 AWS Access Key ID [None]:
 AWS Secret Access Key [None]:
 Default region name [None]:
 Default output format [None]:
-~~~
-aws IAM console 접속 -> 사용자 생성 -> 권한에 AmazonS3FullAccess 추가후 키 확인해서 넣어주면 됨
-Default region은 한국 리전일 경우 ap-northeast-2 
+</code></pre></div></div>
+<p>aws IAM console 접속 -&gt; 사용자 생성 -&gt; 권한에 AmazonS3FullAccess 추가후 키 확인해서 넣어주면 됨
+Default region은 한국 리전일 경우 ap-northeast-2</p>
 
-- s3 버킷 조회
-~~~
-import boto3
+<hr />
+
+<ul>
+  <li>s3 버킷 조회</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import boto3
 from botocore.exceptions import ClientError
-
 
 def getBuckets():
     s3 = boto3.client('s3')
@@ -40,11 +43,15 @@ def getBuckets():
 
 if __name__ == '__main__':
     getBuckets()
-~~~
+</code></pre></div></div>
 
-- upload 용 PreSignedURL 생성
-~~~
-def create_presigned_post():
+<hr />
+
+<ul>
+  <li>upload 용 PreSignedURL 생성</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def create_presigned_post():
     
     bucket_name='yourbuckname'
     object_name='overlay.png' # 생성될 object name
@@ -73,11 +80,15 @@ def create_presigned_post():
 
 if __name__ == '__main__':
     create_presigned_post()
-~~~
+</code></pre></div></div>
 
-- response 확인
-~~~
-{
+<hr />
+
+<ul>
+  <li>response 확인</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
 'url': 'https://yourbucket.s3.amazonaws.com/', 
 'fields': 
 {'key': 'object_name', 
@@ -88,20 +99,32 @@ if __name__ == '__main__':
 'x-amz-signature': ''
 }
 }
-~~~
-url에 아래 field들을 body로 multipart 요청 보내면 된다
+</code></pre></div></div>
 
-- postman 예시
-[screenshot]({{"/images/postman_local.JPG | absolute_url "}})
+<p>url에 아래 field들을 body로 multipart 요청 보내면 된다</p>
 
+<hr />
 
-#### AWS Lambda (Python3.6) 에서 사용
+<ul>
+  <li>postman 예시</li>
+</ul>
 
-- Lambda의 IAM 역할에 AmazonS3FullAccess 추가
+<p><img src="/images/postman_local.JPG" alt="screenshot" /></p>
 
-- Lambda 함수 작성
-~~~
-import json
+<hr />
+
+<h4 id="aws-lambda-python36-에서-사용">AWS Lambda (Python3.6) 에서 사용</h4>
+
+<ul>
+  <li>
+    <p>Lambda의 IAM 역할에 AmazonS3FullAccess 추가</p>
+  </li>
+  <li>
+    <p>Lambda 함수 작성</p>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import json
 import boto3
 
 def lambda_handler(event, context):
@@ -130,11 +153,15 @@ def lambda_handler(event, context):
     # The response contains the presigned URL and required fields
     #print(response)
     return response
-~~~
+</code></pre></div></div>
 
-- 테스트 이벤트 구성 후 테스트했을 때 response
-~~~
-{
+<hr />
+
+<ul>
+  <li>테스트 이벤트 구성 후 테스트했을 때 response</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
   "url": "https://yourbucket.s3.amazonaws.com/",
   "fields": {
     "acl": "public-read",
@@ -148,7 +175,8 @@ def lambda_handler(event, context):
     "x-amz-signature": ""
   }
 }
-~~~
-로컬에서 했을때와 파라미터는 다르지만 똑같이 field를 body로 mulitpart 전송하면됨 
+</code></pre></div></div>
+<p>로컬에서 했을때와 파라미터는 다르지만 똑같이 field를 body로 mulitpart 전송하면됨</p>
 
-외부에서 접속가능한 URL은 https://yourbucket.s3.amazonaws.com/object_name
+<p>외부에서 접속가능한 URL은 https://yourbucket.s3.amazonaws.com/object_name</p>
+:ET

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ansible AWX에서 third-party credential storage 사용하는법</title>
+  <title>GraphQL http request 기본 </title>
 
   <!-- CSS -->
   <link rel="stylesheet" href="/assets/css/main.css" type="text/css">
@@ -42,30 +42,16 @@ ga('send', 'pageview');
   </div>
 </header>
 <div class="post">
-  <div class="post-title">Ansible AWX에서 third-party credential storage 사용하는법</div>
+  <div class="post-title">GraphQL http request 기본 </div>
   <span class="post-date">
-    <time>08 Aug 2018</time>
+    <time>07 Nov 2019</time>
   </span>
   <div class="post-tag">
     <ul>
       
       <li>
-        <a href="http://localhost:4000/tags#vault">
-          <span>vault</span>
-        </a>
-      </li>
-      
-      
-      <li>
-        <a href="http://localhost:4000/tags#ansible">
-          <span>ansible</span>
-        </a>
-      </li>
-      
-      
-      <li>
-        <a href="http://localhost:4000/tags#awx">
-          <span>awx</span>
+        <a href="http://localhost:4000/tags#graphql">
+          <span>graphql</span>
         </a>
       </li>
       
@@ -73,58 +59,111 @@ ga('send', 'pageview');
     </ul>
   </div>
 
-  <h3 id="ansible-lookup-plugin-활용해-동시에-여러-서버의-암호-가져와-실행시킬-수-있다">ansible lookup plugin 활용해 동시에 여러 서버의 암호 가져와 실행시킬 수 있다</h3>
+  <h4 id="graphql-">GraphQL ?</h4>
+<ul>
+  <li>단일 엔드포인트로 백엔드 부담이 줄어듬, serverless와 잘 어울리는듯함</li>
+  <li><a href="https://graphql-kr.github.io/learn/">공식 가이드</a></li>
+</ul>
+
+<h4 id="schema">Schema</h4>
+<hr />
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>type User {
+	id: ID!
+	name: String
+}
+
+type Query {
+	getUser(id: ID!): User
+}
+
+type Mutation {
+	createUser(input: CreateUserInput!): User
+}
+
+input CreateUserInput {
+	name: String
+}
+</code></pre></div></div>
+
+<ul>
+  <li>뮤테이션은 데이터 조작이 일어날 때 사용, resolver를 등록해서 원하는 행동을 할 수 있음</li>
+</ul>
 
 <hr />
 
-<h4 id="vault-서버-구성해-서버별-id-password-저장">vault 서버 구성해 서버별 ID, password 저장</h4>
-<blockquote>
-  <p>docker 사용시 awx_web, awx_task container 내부에 hvac 패키지 설치 해야 함</p>
-</blockquote>
+<h4 id="get---id를-이용한-유저-조회">GET - ID를 이용한 유저 조회</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>endpoint : https://my-url/graphql
+param
+  query : {getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6"){name}}
 
-<h4 id="ansible-awx-inventory탭의-extra-variables에-다음과-같이-플러그인-사용">ansible awx inventory탭의 extra variables에 다음과 같이 플러그인 사용</h4>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-ansible_user : {{ lookup('hashi_vault', secret=secret/{{ inventory_hostname }}:username)}}
-ansible_ssh_pass : {{ lookup('hashi_vault', secret=secret/{{ inventory_hostname }}:password)}} 
-
+url : https://my-url/graphql?query={getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6"){name}}
 </code></pre></div></div>
 
-<blockquote>
-  <p><strong>ansible_hostname</strong> : ansible fact 수집할 때 서버의 호스트네임 읽어온 값</p>
-</blockquote>
-
-<blockquote>
-  <p><strong>inventory_hostname</strong> : inventory에 써있는 호스트 네임 값 ( container의 /etc/hosts 에 host 등록하면 IP주소가 아닌 hostname으로 사용가능)</p>
-</blockquote>
-
-<h4 id="ansible-awx-credential-탭에-custom-credential-생성">ansible awx credential 탭에 custom credential 생성</h4>
-
-<p>Input :</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fields:
-  - type: string
-    id: vault_server
-    label: URL
-  - type: string
-    id: vault_token
-    label: Token
-    secret: true
-required:
-  - vault_server
-  - vault_token 
+<h6 id="graphql-query">graphql query</h6>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6")
+  {
+    name
+  }
+}
 </code></pre></div></div>
 
-<p>Injector :</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-env:
-  VAULT_ADDR: '{{ vault_server }}'
-  VAULT_TOKEN: '{{ vault_token }}'
-
+<h6 id="response">response</h6>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "data": {
+        "getMyModelType": {
+            "name": "Hello, world!"
+        }
+    }
+}
 </code></pre></div></div>
 
-<h4 id="마지막으로-template-탭에서-inventory-credential-적용-후-스크립트-수행">마지막으로, template 탭에서 inventory, credential 적용 후 스크립트 수행</h4>
+<hr />
+
+<h4 id="post---유저-생성">POST - 유저 생성</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>endpoint : https://my-url/graphql
+header : {Content-Type:application/json}
+body : 
+{
+	"query":"mutation myMutation ($user:CreateUserInput!) { createUser(input:$user) { id name }}",
+	"variables":{
+		"user":{
+			"name":"dnsldprp"
+		}
+	}
+}
+</code></pre></div></div>
+
+<ul>
+  <li>body 에 query에는 graphql query string을, variables에는 query variables 입력</li>
+</ul>
+
+<h6 id="graphql-query-1">graphql query</h6>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mutation myMutation($user:CreateUserInput!){
+  createUser(input:$user){
+    id
+    name
+  }
+}
+
+Query variables
+{
+  "user": {
+    "title": "Hello, world!!!!"
+  }
+}
+</code></pre></div></div>
+
+<h6 id="response-1">response</h6>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "data": {
+        "createUser": {
+            "id": "7ac55b71-2c17-4a6b-8c2f-18fd5a90e166",
+            "title": "Hello, world!!!!"
+        }
+    }
+}
+</code></pre></div></div>
 
 
 

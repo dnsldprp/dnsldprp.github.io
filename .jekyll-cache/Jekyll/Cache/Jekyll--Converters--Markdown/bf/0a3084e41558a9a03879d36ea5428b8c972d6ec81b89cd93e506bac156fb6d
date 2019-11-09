@@ -1,0 +1,108 @@
+I"�
+<h4 id="graphql-">GraphQL ?</h4>
+<ul>
+  <li>단일 엔드포인트로 백엔드 부담이 줄어듬, serverless와 잘 어울리는듯함</li>
+  <li><a href="https://graphql-kr.github.io/learn/">공식 가이드</a></li>
+</ul>
+
+<h4 id="schema">Schema</h4>
+<hr />
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>type User {
+	id: ID!
+	name: String
+}
+
+type Query {
+	getUser(id: ID!): User
+}
+
+type Mutation {
+	createUser(input: CreateUserInput!): User
+}
+
+input CreateUserInput {
+	name: String
+}
+</code></pre></div></div>
+
+<ul>
+  <li>뮤테이션은 데이터 조작이 일어날 때 사용, resolver를 등록해서 원하는 행동을 할 수 있음</li>
+</ul>
+
+<hr />
+
+<h4 id="get---id를-이용한-유저-조회">GET - ID를 이용한 유저 조회</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>endpoint : https://my-url/graphql
+param
+  query : {getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6"){name}}
+
+url : https://my-url/graphql?query={getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6"){name}}
+</code></pre></div></div>
+
+<h6 id="graphql-query">graphql query</h6>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  getUser(id:"ca02ab35-b8e6-438a-9d7f-456b12ff46d6")
+  {
+    name
+  }
+}
+</code></pre></div></div>
+
+<h6 id="response">response</h6>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "data": {
+        "getMyModelType": {
+            "name": "Hello, world!"
+        }
+    }
+}
+</code></pre></div></div>
+
+<hr />
+
+<h4 id="post---유저-생성">POST - 유저 생성</h4>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>endpoint : https://my-url/graphql
+header : {Content-Type:application/json}
+body : 
+{
+	"query":"mutation myMutation ($user:CreateUserInput!) { createUser(input:$user) { id name }}",
+	"variables":{
+		"user":{
+			"name":"dnsldprp"
+		}
+	}
+}
+</code></pre></div></div>
+
+<ul>
+  <li>body 에 query에는 graphql query string을, variables에는 query variables 입력</li>
+</ul>
+
+<h6 id="graphql-query-1">graphql query</h6>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mutation myMutation($user:CreateUserInput!){
+  createUser(input:$user){
+    id
+    name
+  }
+}
+
+Query variables
+{
+  "user": {
+    "title": "Hello, world!!!!"
+  }
+}
+</code></pre></div></div>
+
+<h6 id="response-1">response</h6>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "data": {
+        "createUser": {
+            "id": "7ac55b71-2c17-4a6b-8c2f-18fd5a90e166",
+            "title": "Hello, world!!!!"
+        }
+    }
+}
+</code></pre></div></div>
+
+:ET
